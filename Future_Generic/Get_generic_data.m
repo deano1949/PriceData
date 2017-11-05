@@ -75,7 +75,7 @@ for i=startpt:endpt %size(contctlist,2)
         G1rollDT=FutRollDT(id);
         G2rollDT=FutRollDT(id+1);
         G12timegap=G2rollDT-G1rollDT;
-        Carry(j)=(G1ts(j)-G2ts(j))/G2ts(j)*(365/G12timegap);%annualised carry
+        Carry(j)=(G1ts(j)-G2ts(j))/G2ts(j)*(252/G12timegap);%annualised carry
     end
     Gdat.Carry=Carry;
     Gdat.name=secname;
