@@ -1,6 +1,6 @@
 %% Establish Connection to server-ny
 
-% conn=databaseconnection2serverny;
+conn=databaseconnection2serverny;
 
 %% insert instrument
 % instrument=readtable('future_generic_data.xlsx','sheet','Sigmaa005 Instrument',...
