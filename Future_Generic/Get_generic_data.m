@@ -43,6 +43,11 @@ for i=startpt:endpt %size(contctlist,2)
         end
     end
     
+    if isnan(sum(FutRollDT))
+        display(FutRollDT)
+        error(strcat('Please check Future Contract ',secname,' name in infolist'));      
+    end
+    
     FutRolldate=datestr(FutRollDT,'dd/mm/yyyy');    
     Gdat.FutCon=FutConList;
     Gdat.FutRollDT=FutRollDT;
@@ -55,13 +60,22 @@ for i=startpt:endpt %size(contctlist,2)
     
     G1ret=zeros(size(G1ts)); G2ret=zeros(size(G2ts));
     for j=2:size(G1ts,1)
-        if ismember(timestamp(j-1),FutRollDT)
-            G1ret(j)=G1ts(j)/G2ts(j-1)-1;
-            G2ret(j)=G2ts(j)/G3ts(j-1)-1;
+        if ~strcmp(type,'Currency')
+            if ismember(timestamp(j-1),FutRollDT)
+                G1ret(j)=G1ts(j)/G2ts(j-1)-1;
+                G2ret(j)=G2ts(j)/G3ts(j-1)-1;
+            else
+                G1ret(j)=G1ts(j)/G1ts(j-1)-1;
+                G2ret(j)=G2ts(j)/G2ts(j-1)-1;
+            end
         else
             G1ret(j)=G1ts(j)/G1ts(j-1)-1;
-            G2ret(j)=G2ts(j)/G2ts(j-1)-1;
-        end
+            if ismember(timestamp(j-1),FutRollDT)
+                G2ret(j)=G2ts(j)/G3ts(j-1)-1;
+            else
+                G2ret(j)=G2ts(j)/G2ts(j-1)-1;
+            end
+        end  
     end
     
     Gdat.Generic12Return=table(G1ret,G2ret);
