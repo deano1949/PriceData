@@ -7,17 +7,22 @@
 infolist=readtable('price_generic_data.xlsx','sheet','IndexInfo');
 
 load indexdata.mat
-IndexData=get_etf_general_data(1,1,infolist,'Index',IndexData);
+[~,ix]=ismember(infolist.AssetType,'Index'); ix=find(ix==1,100);
+IndexData=get_etf_general_data(256:300,infolist,'Index',IndexData); %177:462
 save indexdata.mat IndexData
 
 load equityetfdata.mat
-EquityETFData=Get_ETF_general_data(2,5,infolist,'EquityETF',EquityETFData);
+[~,ix]=ismember(infolist.AssetType,'Equity'); %find the index numbers matching Equity
+ix=find(ix==1,50);
+EquityETFData=get_etf_general_data(transpose(ix),infolist,'EquityETF',EquityETFData);
 save equityetfdata.mat EquityETFData
 
 load fietfdata.mat
-FIETFData=Get_ETF_general_data(6,8,infolist,'FIETF',FIETFData);
+[~,ix]=ismember(infolist.AssetType,'FI'); ix=find(ix==1,50);
+FIETFData=get_etf_general_data(transpose(ix),infolist,'FIETF',FIETFData);
 save fietfdata.mat FIETFData
 
 load comdtyetfdata.mat
-ComdtyETFData=Get_ETF_general_data(9,12,infolist,'ComdtyETF',ComdtyETFData);
+[~,ix]=ismember(infolist.AssetType,'Comdty'); ix=find(ix==1,50);
+ComdtyETFData=get_etf_general_data(transpose(ix),infolist,'ComdtyETF',ComdtyETFData);
 save comdtyetfdata.mat ComdtyETFData

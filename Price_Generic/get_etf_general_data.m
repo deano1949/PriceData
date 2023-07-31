@@ -1,23 +1,23 @@
-function PriceData=get_etf_general_data(startpt,endpt,infolist,type,PriceData)
+function PriceData=get_etf_general_data(indexrow,infolist,type,PriceData)
 infolistname=fieldnames(infolist);
 
-for i=startpt:endpt %size(contctlist,2)
+for i=indexrow %size(contctlist,2)
     secname=infolist.Name2{i}; secname=strrep(secname,' ','_');
     Gname=infolist.BBG_code{i};
     %% Generic Time series
     fromdate='01/01/1987';
     todate=datestr(today()-1,'mm/dd/yyyy');
-    field={'PX_LAST'};
+    field={'TOT_RETURN_INDEX_GROSS_DVDS'};
     period='daily';
     currency=[];
     G1=bbggethistdata({Gname},field,fromdate,todate,period,currency);
     StartDT=infolist.Start_date(i);
     [~,id]=ismember(StartDT,G1.timestamp);
     if id~=0 %Extract data from start date
-        Gdat.GPrice=G1.PX_LAST(id:end,:);
+        Gdat.GPrice=G1.TOT_RETURN_INDEX_GROSS_DVDS(id:end,:);
         Gdat.timestamp=G1.timestamp(id:end,:);
     else
-        Gdat.GPrice=G1.PX_LAST;
+        Gdat.GPrice=G1.TOT_RETURN_INDEX_GROSS_DVDS;
         Gdat.timestamp=G1.timestamp;
     end
 %     %% Futures Contract list
@@ -46,15 +46,12 @@ for i=startpt:endpt %size(contctlist,2)
     
     %% Calculate Generic TS returns
 %     timestamp=datenum(Gdat.timestamp,'dd/mm/yyyy');
-    G1ts= Gdat.GPrice.(1); %Price
-    
-    G1ret=[0 ;tick2ret(G1ts)];
-    
-    Gdat.GReturn=G1ret;
-    Gdat.GPrice=G1ts;
-    
+    GPrice= Gdat.GPrice.(1); %Price 
+    GReturn=[0 ;tick2ret(GPrice)];
+
+    Gdat2=array2timetable([GPrice GReturn],"RowTimes",datetime(Gdat.timestamp),'VariableNames',{'Price','TReturn'});
    i
-PriceData.(secname)=Gdat;
+PriceData.(secname)=Gdat2;
 eval([type, 'Data=PriceData;']);
 matfilename=strcat(lower(type),'data.mat');
 instruname=strcat(type,'Data');
